@@ -1,0 +1,100 @@
+<html lang="en">
+    <body>
+        <h2>Origin of Input:</h2>
+        <button type="button" onclick="alertDetails()" style="width: 50em">Alert Details</button><br>
+        <button type="button" onclick="logManagement()" style="width: 50em">Log Management</button><br>
+        <br>
+        <button type="button" onclick="copyOutput()" style="width: 50em">Copy Output</button><br>
+        <br>
+        <button type="button" onclick="clearTextAreas()" style="width: 50em">Clear</button><br>
+        <h2>Input</h2>
+        <textarea id="input" style="width: 50em; height: 25em;"></textarea>
+        <h2>Output (Markdown)</h2>
+        <textarea id="output" readonly style="width: 50em; height: 25em"></textarea>
+        <script>
+            function logManagement(){
+                field = document.getElementById("input").value
+                prepared_field = field.split('\n').filter((line) => line.trim()).map((line) => line.replace(/`/g, "\\`").replace(/\|/g, "\\|").trim())
+
+                if (prepared_field[0] == 'Field'){
+                    split_location_1 = prepared_field.indexOf("Value")
+                    split_location_2 = prepared_field.indexOf("Raw Log")
+
+                    keys = prepared_field.slice(1, split_location_1)
+                    values = prepared_field.slice(split_location_1 + 1, split_location_2)
+                    formatchange = prepared_field.slice(split_location_2 + 1)
+
+                    for (i = 0; i < formatchange.length; i += 2){
+                        keys.push(formatchange[i])
+                        values.push(formatchange[i+1])
+                    }
+
+                    keys = keys.map((key) => key.replace(/:/g, "").trim() + ":")
+                    values = values.map((value) => value = "`" + value + "`")
+
+                    pairs = []
+                    for(i=0;i<keys.length;i++){
+                        pairs.push([keys[i],values[i]])
+                    }
+                
+                    keys_pad = Math.max(...pairs.map((pair) => pair[0].length))
+                    values_pad = Math.max(...pairs.map((pair) => pair[1].length))
+                    key = "Key:"
+                    value = "Value"
+                    table = "| " + key + " ".repeat(keys_pad - key.length) + " | " + value + " ".repeat(values_pad - value.length) + " |\n"
+                    table += "| " + "-".repeat(keys_pad) + " | " + "-".repeat(values_pad) + " |\n"
+                    for ([key, value] of pairs){
+                        table += "| " + key + " ".repeat(keys_pad - key.length) + " | " + value + " ".repeat(values_pad - value.length) + " |\n"
+                    }
+                    console.log(table)
+                    document.getElementById("output").value = table
+                }
+            }
+            
+            function alertDetails(){
+                field = document.getElementById("input").value
+                prepared_field = field.split('\n').filter((line) => line.trim()).map((line) => line.replace(/`/g, "\\`").replace(/\|/g, "\\|").trim())
+                keys = []
+                values = []
+
+                for (i = 0; i < prepared_field.length; i += 2){
+                    keys.push(prepared_field[i])
+                    values.push(prepared_field[i+1])
+                }
+
+                keys = keys.map((key) => key.replace(/:/g, "").trim() + ":")
+                values = values.map((value) => value = "`" + value + "`")
+
+                pairs = []
+                for(i=0;i<keys.length;i++){
+                    pairs.push([keys[i],values[i]])
+                }
+            
+                keys_pad = Math.max(...pairs.map((pair) => pair[0].length))
+                values_pad = Math.max(...pairs.map((pair) => pair[1].length))
+                key = "Key:"
+                value = "Value"
+                table = "| " + key + " ".repeat(keys_pad - key.length) + " | " + value + " ".repeat(values_pad - value.length) + " |\n"
+                table += "| " + "-".repeat(keys_pad) + " | " + "-".repeat(values_pad) + " |\n"
+                for ([key, value] of pairs){
+                    table += "| " + key + " ".repeat(keys_pad - key.length) + " | " + value + " ".repeat(values_pad - value.length) + " |\n"
+                }
+                console.log(table)
+                document.getElementById("output").value = table
+            }
+
+            async function copyOutput(){
+                try {
+                    await navigator.clipboard.writeText(document.getElementById("output").value)
+                } catch(error) {
+                    console.error(error.message)
+                }
+            }
+
+            function clearTextAreas(){
+                document.getElementById("input").value = "";
+                document.getElementById("output").value = "";
+            }
+        </script>
+    </body>
+</html>
