@@ -5,6 +5,7 @@
         <button type="button" onclick="logManagement()" style="width: 50em">Log Management</button><br>
         <button type="button" onclick="playbook()" style="width: 50em">Playbook</button><br>
         <button type="button" onclick="artifacts()" style="width: 50em">Artifacts</button><br>
+        <button type="button" onclick="challengeQuestions()" style="width: 50em">Challenge Questions</button><br>
         <br>
         <button type="button" onclick="copyOutput()" style="width: 50em">Copy Output</button><br>
         <br>
@@ -96,16 +97,16 @@
                 }
 
                 for (i=0;i<listOfColumns[0].length;i++){
-                    table += "| "
+                    table += "|"
 
                     if ( i == 1){
                         for (padding of paddingSizes){
-                            table += "-".repeat(padding) + " | "
+                            table += "-".repeat(padding) + "|"
                         }
-                        table += "\n| "
+                        table += "\n|"
                     }
                     for (column of listOfColumns){
-                        table += column[i] + " | "
+                        table += column[i] + "|"
                     }
                     table += "\n"
                 }
@@ -128,6 +129,18 @@
 
             }
 
+            function challengeQuestions(){
+                cleaned = cleanInput()
+                questions = ["Questions"]
+                answers = ["Answers"]
+
+                for ( i = 0 ; i < cleaned.length; i += 3 ){
+                    questions.push(cleaned[i+1])
+                    answers.push("`"+cleaned[i+2]+"`")
+                }
+
+                drawTable([questions,answers])
+            }
         </script>
     </body>
 </html>
